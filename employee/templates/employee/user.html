@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Профиль</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'profile.css' %}">
+</head>
+<body>
+<div class="header">
+  <div class="navbar">
+    <nav>
+      <ul class="nav_links">
+        <li><a href="#home">Главная</a></li>
+        <li><a href="#search">Поиск</a></li>
+        <li><a href="#records">Записи</a></li>
+      </ul>
+    </nav>
+
+    <img src="{% static 'img/logo.svg' %}" alt="logo" class="logo">
+
+    <a class="login" href="{% url 'employee:logout' %}" class="logout">Выйти</a>
+  </div>
+</div>
+  <div class="content">
+    <div class="profile">
+      <div class="avatar">
+        <img class="avatar" src="{% static 'img/avatar.png' %}" alt="">
+      </div>
+      <div class="details">
+        <div class="fio">{{ employee.fullname }}</div>
+          {% if employee.is_admin %}
+        <div class="role"><img src="/static/img/role.svg" alt=""> Администратор</div>
+          {% else %}
+          <div class="role"><img src="/static/img/role.svg" alt=""> Доктор</div>
+          {% endif %}
+        <div class="count"><img src="/static/img/records.svg" alt=""> {{ records.count }}</div>
+      </div>
+    </div>
+
+  <div class="records">
+      <h1>Записи сотрудника</h1>
+        {% for record in records %}
+          <div class="record">
+                <section class="container">
+                    <div class="slide-wrapper">
+                        <div class="slider">
+                            {% for projectimage in record.image_set.all %}
+                                <img id="slide-{{ forloop.counter }}" src="{{projectimage.image.url}}" alt="">
+                            {% endfor %}
+                        </div>
+                        <div class="slider-nav">
+                            {% for projectimage in record.image_set.all %}
+                                <a href="#slide-{{ forloop.counter }}"></a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+            <div class="info">
+                <div id="title">{{ record.fullname }}</div>
+                <div id="desc">{{ record.description}}</div>
+                <div id="localisation"><img src="/static/img/localisation.svg" alt=""> {{ record.localisation }}</div>
+                <div id="employee"><img src="/static/img/profile.svg" alt=""> {{ employee.fullname }}</div>
+            </div>
+          </div>
+        {% endfor %}
+    </div>
+  <div class="footer">
+    Данный вебайт является дипломной работой
+  </div>
+  </div>
+</body>
+</html>

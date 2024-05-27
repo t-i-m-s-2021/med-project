@@ -1,0 +1,127 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <meta name="description" content="">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+  <title>Главная</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet">
+
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+<div id="content">
+
+  <div class="header">
+    <div class="navbar">
+      <nav>
+        <ul class="nav_links">
+          <li><a href="{% url 'index' %}">Главная</a></li>
+          <li><a href="#search">Статистика</a></li>
+          <li><a href="/records/">Записи</a></li>
+        </ul>
+      </nav>
+
+      <img src="{% static 'img/logo.svg' %}" alt="logo" class="logo">
+
+        {% if employee.is_authenticated %}
+      <a href="{% url 'employee:profile' %}" class="login">Профиль</a>
+        {% endif %}
+    </div>
+  </div>
+
+
+  <div class="banner" id="home">
+    <p class="bigText">
+      Empowering Cancer Laboratories with Advanced Screening Solutions
+    </p>
+    <p class="smallText">
+      Welcome to the Cytological Screening Archive, a cloud-based software product designed to streamline cancer
+      laboratory screening. Store, manage, and analyze screening results with ease.
+    </p>
+    <img src="{% static 'img/mainpage.png' %}" alt="">
+  </div>
+
+  <div class="search" id="search">
+    <form action="/" class="searchgrid">
+      <input class="searchbox" type="search" placeholder="Введите ФИО пациента, заключение или комментарии доктора...">
+      <input type="submit" name="" class="searchsubmit" value="Найти">
+    </form>
+  </div>
+
+
+  <div class="recent" id="records">
+    <div class="title">
+      Последние записи
+    </div>
+
+    <div class="records">
+        {% for record in records %}
+      <a href="{% url 'record:id' record.id %}">
+          <div class="record">
+                <section class="container">
+                    <div class="slide-wrapper">
+                        <div class="slider">
+                            {% for projectimage in record.image_set.all %}
+                                <img id="slide-{{ forloop.counter }}" src="{{projectimage.image.url}}" alt="">
+                            {% endfor %}
+                        </div>
+                        <div class="slider-nav">
+                            {% for projectimage in record.image_set.all %}
+                                <a href="#slide-{{ forloop.counter }}"></a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+            <div class="info">
+                <div id="title">{{ record.fullname }}</div>
+                <div id="desc">{{ record.description}}</div>
+                <div id="localisation"><img id="icon" src="/static/img/localisation.svg" alt=""> {{ record.localisation }}</div>
+                <div id="employee"><img id="icon" src="/static/img/profile.svg" alt=""> {{ record.author }}</div>
+            </div>
+          </div>
+            </a>
+      {% endfor %}
+
+    <div class="allrecords">
+      <a href="{% url 'record:records' %}" class="">Все записи</a>
+    </div>
+  </div>
+{#  </div>#}
+
+  <div class="loginform" id="loginform">
+    <div class="logintitle">Авторизация</div>
+    <div class="loginnotice">Авторизируйтесь, чтобы просматривать и создавать записи</div>
+    <form action="{% url 'index' %}" class="logingrid" method="post">
+        {% csrf_token %}
+        {{ form.username }}
+        {{ form.password }}
+      <input type="submit" class="authboxconfirm" value="Войти">
+    </form>
+  </div>
+
+  <div class="footer">
+    Данный вебайт является дипломной работой
+  </div>
+
+</div>
+</body>
+
+</html>

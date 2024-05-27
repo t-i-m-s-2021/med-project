@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Профиль</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'profile.css' %}">
+</head>
+<body>
+<div class="header">
+  <div class="navbar">
+    <nav>
+      <ul class="nav_links">
+        <li><a href="{% url 'index' %}">Главная</a></li>
+        <li><a href="#search">Статистика</a></li>
+        <li><a href="{% url 'record:records' %}">Записи</a></li>
+      </ul>
+    </nav>
+
+    <img src="{% static 'img/logo.svg' %}" alt="logo" class="logo">
+
+      <a class="login" href="{% url 'employee:logout' %}" class="logout">Выйти</a>
+  </div>
+</div>
+  <div class="content">
+    <div class="profile">
+      <div class="avatar">
+        <img class="avatar" src="{% static 'img/avatar.png' %}" alt="">
+      </div>
+      <div class="details">
+        <div class="fio">{{ form.fullname }}</div>
+          {% if form.is_admin %}
+        <div class="role"><img src="/static/img/role.svg" alt=""> Администратор</div>
+          {% else %}
+          <div class="role"><img src="/static/img/role.svg" alt=""> Доктор</div>
+          {% endif %}
+        <div class="count"><img src="/static/img/records.svg" alt=""> {{ my_records.count }}</div>
+      </div>
+    </div>
+{% if form.is_admin %}
+    <div class="form">
+      <h2>Новый сотрудник</h2>
+      <form action="{% url 'employee:profile' %}" method="post">
+          {% csrf_token %}
+        <div class="fields">
+            <label class="labelbox" for="{{ add.fullname.id_for_label }}">ФИО сотрудника</label>
+            {{ add.fullname }}
+            <label class="labelbox" for="{{ add.username.id_for_label }}">Логин сотрудника</label>
+            {{ add.username }}
+            <label class="labelbox" for="{{ add.password1.id_for_label }}">Придумайте пароль</label>
+            {{ add.password1 }}
+            <label class="labelbox" for="{{ add.password2.id_for_label }}">Подтвердите пароль</label>
+            {{ add.password2 }}
+            <label class="labelbox" for="{{ add.is_admin.id_for_label }}">Сотрудник является администратором?</label>
+            {{ add.is_admin }}
+            <input class="confirm" name="form" type="submit" value="Подтвердить">
+        </div>
+      </form>
+    </div>
+{% endif %}
+  <div class="addrecord">
+      <h2>Новая карточка пациента</h2>
+      <form action="{% url 'employee:profile' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+        <div class="fields">
+            <label class="labelbox" for="{{ record.fullname.id_for_label }}">ФИО сотрудника</label>
+            {{ record.fullname }}
+            <label class="labelbox" for="{{ record.description.id_for_label }}">Добавьте опинисание</label>
+            {{ record.description }}
+            <label class="labelbox" for="{{ record.localisation.id_for_label }}">Выберите локализацию</label>
+            {{ record.localisation }}
+            <input type="file" multiple name="image">
+            <input class="regbox" id="hidden" type="text" name="author" value="{{ form.id }}">
+          <input class="confirm" type="submit" value="Подтвердить">
+        </div>
+      </form>
+    </div>
+
+  <div class="records">
+      <h1>Записи сотрудника</h1>
+        {% for record in my_records %}
+          <div class="record">
+                <section class="container">
+                    <div class="slide-wrapper">
+                        <div class="slider">
+                            {% for projectimage in record.image_set.all %}
+                                <img id="slide-{{ forloop.counter }}" src="{{projectimage.image.url}}" alt="">
+                            {% endfor %}
+                        </div>
+                        <div class="slider-nav">
+                            {% for projectimage in record.image_set.all %}
+                                <a href="#slide-{{ forloop.counter }}"></a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+            <div class="info">
+                <div id="title">{{ record.fullname }}</div>
+                <div id="desc">{{ record.description}}</div>
+                <div id="localisation"><img src="/static/img/localisation.svg" alt=""> {{ record.localisation }}</div>
+                <div id="employee"><img src="/static/img/profile.svg" alt=""> {{ form.fullname }}</div>
+            </div>
+          </div>
+        {% endfor %}
+    </div>
+  <div class="footer">
+    Данный вебайт является дипломной работой
+  </div>
+  </div>
+</body>
+</html>

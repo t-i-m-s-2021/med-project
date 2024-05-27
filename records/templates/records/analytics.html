@@ -1,0 +1,41 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Записи</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'records.css' %}">
+</head>
+<body>
+    <form action="/records/" method="post">
+    {% csrf_token %}
+      <div class="filter">
+          <select name="author" id="">
+              <option selected disabled>Автор записи</option>
+              {% for employee in employees %}
+              <option>{{ employee.fullname }}</option>
+              {% endfor %}
+          </select>
+        
+          <select name="patient" id="">
+              <option selected disabled>Пациент</option>
+              {% for record in records %}
+              <option>{{ record.fullname }}</option>
+              {% endfor %}
+          </select>
+
+          From: <input type="date" name="from">
+          To: <input type="date" name="to">
+
+          <input type="submit" value="Найти">
+
+      </div>
+    </form>
+</body>
+</html>

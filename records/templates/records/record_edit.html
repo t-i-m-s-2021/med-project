@@ -1,0 +1,97 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Записи</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'record_edit.css' %}">
+</head>
+<body>
+    <div class="header">
+      <div class="navbar">
+        <nav>
+          <ul class="nav_links">
+            <li><a href="{% url 'index' %}">Главная</a></li>
+            <li><a href="#search">Статистика</a></li>
+            <li><a href="{% url 'record:records' %}">Записи</a></li>
+          </ul>
+        </nav>
+        <img src="{% static 'img/logo.svg' %}" alt="logo" class="logo">
+          <a class="login" href="{% url 'employee:profile' %}" class="logout">Профиль</a>
+      </div>
+    </div>
+    <div class="content">
+      <div class="records">
+        <h1>Карточка №{{ record.id }}
+
+        <form action="/records/{{ record.id }}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div id="hidden">
+                {{ editForm.fullname }}
+                {{ editForm.description }}
+                {{ editForm.localisation }}
+                {{ editForm.author }}
+            </div>
+             {% if record.visible %}
+                <input type="checkbox" name="visible" id="hidden">
+                <input class="delete_restore" type="submit" value="Удалить">
+
+            {% else %}
+                <input type="checkbox" checked name="visible" id="hidden">
+                <input class="delete_restore" type="submit" value="Восстановить">
+            {% endif %}
+    </form>
+        </h1>
+            <h3>Выберите изображения, которые хотите удалить</h3>
+              <form action="/records/{{ record.id }}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+              <div class="record">
+                <section class="container">
+                    <div class="slide-wrapper">
+                        <div class="slider">
+                            {% for image in images %}
+                                <img class="big_image" id="slide-{{ forloop.counter }}" src="{{image.image.url}}" alt="">
+                                <div>
+                                <input class="for_delete" type="checkbox" name="id_for_delete" value="{{ image.id }}">
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="slider-nav">
+                            {% for image in images %}
+                                <a href="#slide-{{ forloop.counter }}"></a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="upload">
+                        <label for="image" class="btn">Вы можете загрузить больше изображений <img id="icon" src="/static/img/arrow.svg" alt=""></label>
+                        <input id="image" type="file" multiple name="image">
+                    </div>
+                </section>
+            <div class="info">
+                {{ editForm.fullname }}
+                {{ editForm.description }}
+                <div id="hidden">
+                    {{ editForm.author }}
+                    {{ editForm.visible }}
+                </div>
+                <div id="localisation"><img id="icon" src="/static/img/localisation.svg" alt=""> {{ editForm.localisation }}</div>
+                <div id="employee"><img id="icon" src="/static/img/profile.svg" alt="">{{ employee.fullname }}</div>
+                <input id="edit" type="submit" value="Подтвердить">
+            </div>
+          </div>
+          </form>
+        </div>
+      </div>
+    <div class="footer">
+    Данный вебайт является дипломной работой
+    </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Записи</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'records.css' %}">
+</head>
+<body>
+    <div class="header">
+      <div class="navbar">
+        <nav>
+          <ul class="nav_links">
+            <li><a href="{% url 'index' %}">Главная</a></li>
+            <li><a href="#search">Статистика</a></li>
+            <li><a href="{% url 'record:records' %}">Записи</a></li>
+          </ul>
+        </nav>
+        <img src="{% static 'img/logo.svg' %}" alt="logo" class="logo">
+          <a class="login" href="{% url 'employee:profile' %}" class="logout">Профиль</a>
+      </div>
+    </div>
+    <div class="content">
+      <div class="search" id="search">
+        <form action="/records/" class="searchgrid" method="post">
+            {% csrf_token %}
+
+                <input class="searchbox" type="search" name="search" placeholder="Диагноз, Номер записи, Фамилию, имя, либо отчество пациента/доктора...">
+                <button class="submit" type="submit"><img src="/static/img/search.svg" alt=""></button>
+
+            <div class="filters">
+                <div><img id="icon" src="/static/img/from.svg" alt=""> <input type="date" name="from"></div>
+                <div><img id="icon" src="/static/img/to.svg" alt=""> <input type="date" name="to"></div>
+                <div>
+                    <img id="icon" src="/static/img/localisation.svg" alt="">
+                    <select name="localisation" id="">
+                    <option selected disabled>Выберите зону локализации</option>
+                        {% for record in records %}
+                            <option>{{ record.localisation }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if employee.is_admin %}
+                <div>
+                    <label for="deleted">Покаказать удаленные записи</label>
+                    <input type="checkbox" name="deleted">
+                </div>
+                {% endif %}
+            </div>
+        </form>
+      </div>
+      <div class="records">
+        {% for record in records %}
+            <a href="{% url 'record:id' record.id %}">
+          <div class="record">
+                <section class="container">
+                    <div class="slide-wrapper">
+                        <div class="slider">
+                            {% for projectimage in record.image_set.all %}
+                                <img id="slide-{{ forloop.counter }}" src="{{projectimage.image.url}}" alt="">
+                            {% endfor %}
+                        </div>
+                        <div class="slider-nav">
+                            {% for projectimage in record.image_set.all %}
+                                <a href="#slide-{{ forloop.counter }}"></a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+            <div class="info">
+                <div id="title">{{ record.fullname }}</div>
+                <div id="desc">{{ record.description}}</div>
+                <div id="localisation"><img id="icon" src="/static/img/localisation.svg" alt=""> {{ record.localisation }}</div>
+                <div id="employee"><img id="icon" src="/static/img/profile.svg" alt=""> {{ record.author }}</div>
+            </div>
+          </div>
+            </a>
+        {% endfor %}
+    </div>
+      </div>
+    <div class="footer">
+    Данный вебайт является дипломной работой
+    </div>
+    </div>
+</body>
+</html>
